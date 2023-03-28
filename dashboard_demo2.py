@@ -15,19 +15,22 @@ class demo:
     def demo_plot(self,df):
         # Define the items to be displayed in the drop-down menu
         menu_items = ["Open", "High", "Low", "Close", "Adj Close", "Volume"]
-
         # Create the drop-down menu widget
-        dropdown = pn.widgets.Select(options=menu_items)
+        dropdown = pn.widgets.Select(name = '### Select a feature from below',options=menu_items)
 
         #radio buttons for line or bar plot
         radio_group = pn.widgets.RadioButtonGroup(
             name='Radio Button Group', options=['Line Plot', 'Bar Plot'], button_type='success')
+        
+        # Define the drop-down menu for tickers
+        items = ['IBM','AAPL','TSLA','MSFT']
+        # Create the drop-down menu widget
+        tickers = pn.widgets.Select(name='Select a ticker from below', options=items, size=2)
 
 
-        @pn.depends(dropdown)
-        def ticker(dropdown):
-            return f"""  This dashboard gives the line, bar and candle stick plot for the feature you select for the 
-            selected Ticker \n ### Select a feature from below"""
+        def intro():
+            return f"""  This dashboard gives the **line, bar and candle stick plot** for the feature you select for the 
+            selected Ticker """
         
         @pn.depends(dropdown, radio_group)
         def plot_line(dropdown,radio_group):
@@ -65,7 +68,7 @@ class demo:
 
 
         plots_box = pn.WidgetBox(pn.Row(
-                                    pn.Column(pn.pane.PNG('logo.png', height=350, width = 350),ticker, dropdown, radio_group)
+                                    pn.Column(pn.pane.PNG('logo.png', height=350, width = 350), intro, dropdown, radio_group)
                                    ,pn.Column(pn.bind(plot_line,dropdown, radio_group),pn.pane.HoloViews(candle_stick_plot)),
                                    #pn.Row(pn.bind(candle)), 
                                      align="start",
@@ -74,7 +77,7 @@ class demo:
         dashboard = pn.Row(plots_box, sizing_mode="stretch_width")
         dashboard.show()
 
-df = pd.read_csv('all_stocks.csv')
+df = pd.read_csv('all_stocks22.csv')
 
 # the date column is in object type so we need to change it into datetime format
 df['Date'] = pd.to_datetime(df.Date,errors='ignore')
